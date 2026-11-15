@@ -66,8 +66,8 @@ def summarize(u):
     cc = u["contributionsCollection"]
     stats = [
         ("Total Stars", sum(r["stargazerCount"] for r in repos)),
-        ("Commits (last year)", cc["totalCommitContributions"] + cc["restrictedContributionsCount"]),
-        ("Contributions (last year)", cc["contributionCalendar"]["totalContributions"]),
+        ("Commits (last year)", cc["totalCommitContributions"]),
+        ("Contributions (last year)", cc["contributionCalendar"]["totalContributions"] - cc["restrictedContributionsCount"]),
         ("Pull Requests", u["pullRequests"]["totalCount"]),
         ("Issues", u["issues"]["totalCount"]),
         ("Public Repos", u["repositories"]["totalCount"]),
