@@ -1,0 +1,36 @@
+name: Update profile
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate stats cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/gen_stats.py assets
+      - name: Commit stats cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          git diff --cached --quiet || git commit -m "Update stats cards"
+          git push
+      - uses: gautamkrishnar/blog-post-workflow@v1
+        with:
+          feed_list: "https://kakkky.dev/rss.xml"
+          max_post_count: 5
+          template: '<tr><td><a href="$url">$title</a></td><td>$date</td></tr>$newline'
+          date_format: UTC:yyyy-mm-dd
+          commit_message: "Update latest blog posts"
